@@ -7,27 +7,16 @@ output: pdf_document
 
 #  Purpose
 <p>  The purpose of this document is to demonstrate some of the code I created for reporting
-off of various databases.  I keep sample / snippets of code when I learn something new so I can reuse the syntax in the future.  The schema have been destroyed and as I did not always notate
-a variable assigned to schema, some of the joins will not be functional.
+off of various databases.  The schema, some of the logic, the names, and other pieces of information have been changed so this work is non-functional, for example only.
 
-I was also limited in my permissions on the database.  I was not allowed to create
-procedures on the oracle databases and moved away from the stored procedures on the
-SQL Server databases b/c documenting the code there was more time consuming (i.e., I could
-not leverage the sytem tables.  See my repo [Documenting Views](https://github.com/andrea345/DocumentingViews)
-)
-
-I had more flexibility in code as we went through the Oracle upgrades to version 12.  Some of the statistical analysis statements were only available to me after the most recent upgrade.
-
-Also, I come to this work from an engineering perspective.  I keep track of my syntax by keeping copies of useful code and pasting that into work as I need.  One of my most used statements, the rank statement, has a structure I continue to forget to this day because I simply "copy" / "paste" it into code so often I never remembered.  
-
-Another thing you'll find is much of my parsing is not done with REGEXP because I did not have access to that group of commands until recently, and even then, not across all databases.  So much of my older code used INSTR, SUBSTR, etc.  I have, however, included some code with examples of using REGEXP syntax.
+I keep track of my syntax by keeping copies of useful code and pasting that into work as I need.  One of my most used statements, the rank statement, has a structure I continue to forget to this day because I simply "copy" / "paste" it into code so often I never remembered.  I had more flexibility in code as we went through the Oracle upgrades to version 12.  Some of the statistical analysis statements were only available to me after the most recent upgrade on one of the databases.  Until recently, my parsing is not done with REGEXP because I did not have access to that group of commands, and even then, not across all databases.  So much of my older code used INSTR, SUBSTR, etc.  I have, however, included some code with examples of using REGEXP syntax.
 </p>
 ##  Code Example 1 - nested queries, ranking, creating key fields / unique identifiers, joining, dblink
 
 This bit of code creates a view based off dblinked connection to another database for configuration information.  The challenges in joining the two tables is that the data stream is often interrupted, so I have to query across the report period range and pull only the latest configuration data.  I use row_number for the rank and partition by a variety of attributes.  In this case, the order is only by one attribute, but I do have queries where there are more than one attribute in both the partition and the order by statements of row_number.  Besides struggling with inconsistent reporting and a fixed date range to report by, I'm having to deal with inconsistent data types, character strings, and creating unique identifiers for key field creation.  
 
 
-****************
+******
 create or replace view MSC_SUBNET_CONNECTIONS as 
 
 WITH
@@ -252,61 +241,10 @@ but dec to hex - concatenating data to create multiple versions for this view fo
                 'GIGABITETHERNET' as table_name FROM EMMG.GIGABITETHERNET where TRUNC(DATETIME) 
                 > = TRUNC(SYSDATE) UNION ALL
                             SELECT DISTINCT mgw, datetime, to_char(datetime, 'DD-MON-YYYY')  as dow, 
-                'IMBASICMESSAGE' as table_name FROM EMMG.IMBASICMESSAGE where TRUNC(DATETIME) > 
-                = TRUNC(SYSDATE) UNION ALL
-                            SELECT DISTINCT mgw, datetime, to_char(datetime, 'DD-MON-YYYY')  as dow, 
-                'IMEXTANNOUNCEMENTS' as table_name FROM EMMG.IMEXTANNOUNCEMENTS where TRUNC
-                (DATETIME) > = TRUNC(SYSDATE) UNION ALL
-                            SELECT DISTINCT mgw, datetime, to_char(datetime, 'DD-MON-YYYY')  as dow, 
-                'IPACCESSHOSTET' as table_name FROM EMMG.IPACCESSHOSTET where TRUNC(DATETIME) > 
-                = TRUNC(SYSDATE) UNION ALL
-                            SELECT DISTINCT mgw, datetime, to_char(datetime, 'DD-MON-YYYY')  as dow, 
-                'IPACCESSHOSTGPB' as table_name FROM EMMG.IPACCESSHOSTGPB where TRUNC(DATETIME) 
-                > = TRUNC(SYSDATE) UNION ALL
-                            SELECT DISTINCT mgw, datetime, to_char(datetime, 'DD-MON-YYYY')  as dow, 
-                'IPINTERFACE' as table_name FROM EMMG.IPINTERFACE where TRUNC(DATETIME) > = 
-                TRUNC(SYSDATE) UNION ALL
-                            SELECT DISTINCT mgw, datetime, to_char(datetime, 'DD-MON-YYYY')  as dow, 
-                'IPV6INTERFACE' as table_name FROM EMMG.IPV6INTERFACE where TRUNC(DATETIME) > = 
-                TRUNC(SYSDATE) UNION ALL
-                            SELECT DISTINCT mgw, datetime, to_char(datetime, 'DD-MON-YYYY')  as dow, 
-                'M3UASSOCIATION' as table_name FROM EMMG.M3UASSOCIATION where TRUNC(DATETIME) > 
-                = TRUNC(SYSDATE) UNION ALL
-                            SELECT DISTINCT mgw, datetime, to_char(datetime, 'DD-MON-YYYY')  as dow, 
-                'MGWAPPLICATION' as table_name FROM EMMG.MGWAPPLICATION where TRUNC(DATETIME) > 
-                = TRUNC(SYSDATE) UNION ALL
-                            SELECT DISTINCT mgw, datetime, to_char(datetime, 'DD-MON-YYYY')  as dow, 
-                'MSDEVICEPOOL' as table_name FROM EMMG.MSDEVICEPOOL where TRUNC(DATETIME) > = 
-                TRUNC(SYSDATE) UNION ALL
-                            SELECT DISTINCT mgw, datetime, to_char(datetime, 'DD-MON-YYYY')  as dow, 
-                'MTP3BSPANSI' as table_name FROM EMMG.MTP3BSPANSI where TRUNC(DATETIME) > = 
-                TRUNC(SYSDATE) UNION ALL
-                            SELECT DISTINCT mgw, datetime, to_char(datetime, 'DD-MON-YYYY')  as dow, 
-                'MTP3BSRS' as table_name FROM EMMG.MTP3BSRS where TRUNC(DATETIME) > = TRUNC
-                (SYSDATE) UNION ALL
-                            SELECT DISTINCT mgw, datetime, to_char(datetime, 'DD-MON-YYYY')  as dow, 
-                'PLUGINUNIT' as table_name FROM EMMG.PLUGINUNIT where TRUNC(DATETIME) > = 
-                TRUNC(SYSDATE) UNION ALL
-                            SELECT DISTINCT mgw, datetime, to_char(datetime, 'DD-MON-YYYY')  as dow, 
-                'PLUGINUNIT_SPLIT' as table_name FROM EMMG.PLUGINUNIT_SPLIT where TRUNC
-                (DATETIME) > = TRUNC(SYSDATE) UNION ALL
-                            SELECT DISTINCT mgw, datetime, to_char(datetime, 'DD-MON-YYYY')  as dow, 
-                'REMOTESITE' as table_name FROM EMMG.REMOTESITE where TRUNC(DATETIME) > = 
-                TRUNC(SYSDATE) UNION ALL
-                            SELECT DISTINCT mgw, datetime, to_char(datetime, 'DD-MON-YYYY')  as dow, 
-                'SCTP' as table_name FROM EMMG.SCTP where TRUNC(DATETIME) > = TRUNC(SYSDATE) 
-                UNION ALL
-                            SELECT DISTINCT mgw, datetime, to_char(datetime, 'DD-MON-YYYY')  as dow, 
-                'SCTPASSOCIATION' as table_name FROM EMMG.SCTPASSOCIATION where TRUNC(DATETIME) 
-                > = TRUNC(SYSDATE) UNION ALL
-                            SELECT DISTINCT mgw, datetime, to_char(datetime, 'DD-MON-YYYY')  as dow, 
-                'UNKNOWNREMOTESITE' as table_name FROM EMMG.UNKNOWNREMOTESITE where TRUNC
-                (DATETIME) > = TRUNC(SYSDATE) UNION ALL
-                            SELECT DISTINCT mgw, datetime, to_char(datetime, 'DD-MON-YYYY')  as dow, 
                 'VMGW' as table_name FROM EMMG.VMGW where TRUNC(DATETIME) > = TRUNC(SYSDATE) 
                 
                     ) 
-                    --where dow like '08-APR-2012'
+                    --where dow like '08-APR-2015'
                  ,dataall as (
                     select
                     dow,
@@ -322,27 +260,13 @@ but dec to hex - concatenating data to create multiple versions for this view fo
                             count(datetime)
                         for table_name in (
                  
-                                'ETHERNETSWITCHMOD',
-                                'ETRESOURCE',
-                                'GIGABITETHERNET',
-                                'IMBASICMESSAGE',
-                                'IMEXTANNOUNCEMENTS',
-                                'IPACCESSHOSTET',
-                                'IPACCESSHOSTGPB',
-                                'IPINTERFACE',
-                                'IPV6INTERFACE',
-                                'M3UASSOCIATION',
-                                'MGWAPPLICATION',
-                                'MSDEVICEPOOL',
-                                'MTP3BSPANSI',
-                                'MTP3BSRS',
-                                'PLUGINUNIT',
+                                ' 
+                                'IMEXTANNOUNCEMENTS', 
                                 'PLUGINUNIT_SPLIT',
                                 'REMOTESITE',
                                 'SCTP',
-                                'SCTPASSOCIATION',
-                                'UNKNOWNREMOTESITE',
-                                'VMGW'
+                                'SCTPASSOCIATION'
+                                ' 
                         
                             ) 
                         )
@@ -380,11 +304,6 @@ level_1 as (
             case when d.mgw_lo is null then c.switch||'-LOCAL' else d.mgw_lo end as MGW_lo,
             case when d.mgw_loc is null then 'LOCAL' else d.mgw_loc end as mgw_loc,
             nvl(d.GWINV_VSP_CARD_CT,0) as GWINV_VSP_CARD_CT, 
-            nvl(d.CONTEXT_CAP, 0) as mgw_CONTEXT_CAP,  
-            nvl(d.PORT_EQUIVALENT,0) as mgw_PORT_EQUIVALENT, 
-            nvl(d.ATM_PVC_CT, 0) as ATM_PVC_CT, 
-            nvl(d.ATM_CONTEXTS, 0) as alloc_ATM_Contexts, 
-            nvl(d.TXX_MGW_CONTEXTS, 0) as alloc_TXX_MGW_CONTEXTS, 
             nvl(d.IU_IP_CONTEXT,0) as IU_IP_CONTEXT,
             nvl(i.NONA_CHANNELS,0) as NONA_CHANNELS, 
             nvl(i.NONA_ERLANGS, 0) as NONA_ERLANGS, 
@@ -408,10 +327,10 @@ LEVEL2 AS (
             aa.SW_TYPE,
              case when aa.GWINV_VSP_CARD_CT =0 or aa.switch = 'BXX' then 'TXX' else
                     case when aa.MGW_LOC like 'REMOTE%' then 'RMGW' else 'CS/MGW' end end as NODE_TYPE,
-            case when sw_type = 'TYPEMSC' then 'OTHER' ELSE
-                case when a_channels =0 and (ALLOC_ATM_Contexts >0 or IU_IP_CONTEXT > 0) then '3G' else
-                    case when a_channels >0  and (ALLOC_ATM_Contexts >0 or IU_IP_CONTEXT >0) then '2G/3G' else 
-                        case when sw_type = 'ATCA' then '3G' else '2G' END END end end as FUNCTION,                    
+            case when sw_type = 'TYPEC' then 'OTHER' ELSE
+                case when a_channels =0 and (ALLOC_AT_Contexts >0 or IP_CONTEXT > 0) then 'bb' else
+                    case when a_channels >0  and (ALLOC_AT_Contexts >0 or IIP_CONTEXT >0) then 'bc' else 
+                        case when sw_type = 'CA' then 'gG' else 'cG' END END end end as FUNCTION,                    
 
             o.MSC_FRIENDLY_NAME, 
             o.NETOPTS_CLLI, 
@@ -422,8 +341,8 @@ LEVEL2 AS (
             aa.MGW_lo,
             aa.MGW_LOC,
             
-            aa.GWINV_VSP_CARD_CT,
-            nvl(n.SIPI_VSP_COUNT,0) as SIPI_VSP_COUNT,          
+            aa.GWINSP_CARD_CT,
+            nvl(n.SIPI_P_COUNT,0) as SIPI_P_COUNT,          
    
             aa.MGW_CONTEXT_CAP,
             trunc(ac.erlangb_package.ERLANGB_OFFERED(0.xxx,aa.MGW_CONTEXT_CAP)) AS MGW_CTXT_TRAFF_CAP,
@@ -447,40 +366,37 @@ LEVEL2 AS (
             aa.NONA_CHANNELS+aa.A_CHANNELS as alloc_TXX_chnl,
  
  
-            CASE WHEN aa.ALLOC_ATM_Contexts= 0 THEN 0 ELSE trunc(ac.erlangb_package.ERLANGB_OFFERED(0.xxx,aa.ALLOC_ATM_Contexts)) END AS ATM_TRAFF_CAP,
-            CASE WHEN aa.IU_IP_CONTEXT= 0 THEN 0 ELSE trunc(ac.erlangb_package.ERLANGB_OFFERED(0.xxx,aa.IU_IP_CONTEXT)) END AS IU_IP_traff_cap,
-            CASE WHEN NVL(n.SIPI_CTX_CAP,0)= 0 THEN 0 ELSE trunc(ac.erlangb_package.ERLANGB_OFFERED(0.xxx,nvl(n.SIPI_CTX_CAP,0) )) END as sipi_traff_cap,
-            CASE WHEN aa.ALLOC_TXX_MGW_CONTEXTS = 0 THEN 0 ELSE trunc(ac.erlangb_package.ERLANGB_OFFERED(0.xxx,aa.ALLOC_TXX_MGW_CONTEXTS))END  as TXX_mgw_traff_cap,          
-            CASE WHEN nvl(h.SPM_DTC_ALLOC_CHNL,0)= 0 THEN 0 ELSE trunc(ac.erlangb_package.ERLANGB_OFFERED(0.xxx,nvl(h.SPM_DTC_ALLOC_CHNL,0))) END as alloc_spm_dtc_traff_cap,          
-            CASE WHEN aa.NONA_CHANNELS= 0 THEN 0 ELSE trunc(ac.erlangb_package.ERLANGB_OFFERED(0.xxx,aa.NONA_CHANNELS)) END as nona_traff_cap,    
-            CASE WHEN aa.A_CHANNELS = 0 THEN 0 ELSE trunc(ac.erlangb_package.ERLANGB_OFFERED(0.xxx,aa.A_CHANNELS)) END as a_intfc_traff_cap,
-            CASE WHEN aa.NONA_CHANNELS+aa.A_CHANNELS = 0 THEN 0 ELSE trunc(ac.erlangb_package.ERLANGB_OFFERED(0.xxx,aa.NONA_CHANNELS+aa.A_CHANNELS)) END as tot_TXX_traff_cap,               
+            CASE WHEN aa.ALLOC_AT_Contexts= 0 THEN 0 
+                ELSE trunc(ac.erlangb_package.ERLANGB_OFFERED(0.xxx,aa.ALLOC_AT_Contexts)) END AS AT_TRAFF_CAP,
+         
+            CASE WHEN aa.NONA_CHANNELS= 0 THEN 0 
+                ELSE trunc(ac.erlangb_package.ERLANGB_OFFERED(0.xxx,aa.NONA_CHANNELS)) END as nona_traff_cap,    
+            CASE WHEN aa.A_CHANNELS = 0 THEN 0 
+                ELSE trunc(ac.erlangb_package.ERLANGB_OFFERED(0.xxx,aa.A_ELS)) END as afc_traff_cap,
+            CASE WHEN aa.NONNELS+aa.A_CNELS = 0 THEN 0 
+                ELSE trunc(ac.erlangb_package.ERLANGB_OFFERED(0.xxx,aa.NONA_CHAS+aa.ANNELS)) END as tot_TXX_traff_cap,               
            
-            aa.A_ERLANGS,
-            aa.NONA_ERLANGS,
-            nvl(j.ATM_ERL, 0) as atm_IU_erl,
-            nvl(j.IU_IP_ERL,0) as IU_ip_erl,
-            nvl(n.SIP_ERL,0) as sip_i_erl,
-             aa.A_ERLANGS+aa.NONA_ERLANGS AS TXX_ERL,
-            nvl(n.SIP_ERL,0)+ nvl(j.IU_IP_ERL,0)+nvl(j.ATM_ERL, 0)+A_ERLANGS+ NONA_ERLANGS as tot_erl_traff,
+            aa.A_RLAGS,
+            aa.NONA_RLNGS,
+            nvl(j.AT_ERL, 0) as aterl,
+            nvl(j.IP_ERL,0) as Ip_erl,
+            nvl(n.SIPRL,0) as sii_erl,
+             aa.ALANGS+aa.NONA_ERLANGS AS TXX_ERL,
+            nvl(n.SIERL,0)+ nvl(j.IU_ERL,0)+nvl(j.A_ERL, 0)+A_ERL+ NONNGS as tot_erl_traff,
             
             
-            trunc(ac.erlangb_package.ERLANGB_capacity(0.xxx,nvl(n.SIP_ERL,0)+ nvl(j.IU_IP_ERL,0)+nvl(j.ATM_ERL, 0)+aa.A_ERLANGS+ aa.NONA_ERLANGS)) as reqd_avg_contexts,
+            trunc(ac.erlangb_package.ERLANGB_capacity(0.xxx,nvl(n.SIERL,0)+ nvl(j.IUERL,0)+nvl(j.ATMERL, 0)+aa.AEANGS+ aa.NOLANGS)) as revg_contexts,
             
-            ROUND(ALLOC_ATM_CONTEXTS/24,0) AS IU_ATM_Port_alloc, 
-            ROUND(NONA_CHANNELS/24,0) AS nona_port_alloc, 
-            ROUND(A_CHANNELS/24,0) AS a_intfc_port_alloc,
-            ROUND((aa.NONA_CHANNELS+aa.A_CHANNELS)/24,0) as TXX_port_alloc,
-            ROUND(IU_IP_CONTEXT/24,0) AS IU_ip_port_alloc, 
-            ROUND(nvl(n.SIPI_CTX_CAP,0)/24,0) AS sipi_port_alloc,
-            round(nvl(h.SPM_DTC_ALLOC_CHNL,0)/24,0) as spm_dtc_alloc_t1                
+            ROUND(ALLOC_TEXTS/24,0) AS IUPort_alloc, 
+                  ROUND(nvl(n.SICTX_CAP,0)/24,0) AS sipirt_alloc,
+            round(nvl(h.SPM_LLOC_CHNL,0)/24,0) as spm_d_alloc_t1                
 
 
 from level_1 aa
 left join ab.no_MSC_NAME o on aa.CLLI||'-'||aa.MGW_LOC = o.msc_mgw_lo           
-left join ab.no_RNC_TRAFF_SUM j  on aa.mgw_lo = j.MGW_lo
-left join ab.no_SIP_TRAFF n on aa.mgw_lo = n.MGW_lo
-left join ab.no_TXX_CHANNEL_CT h on aa.mgw_lo = h.MGW_lo
+left join ab.no_RFF_SUM j  on aa.mgw_lo = j.MGW_lo
+left join ab.no_SFF n on aa.mgw_lo = n.MGW_lo
+left join ab.no_TXNNEL_CT h on aa.mgw_lo = h.MGW_lo
 left join ab.no_EQPCOUNTS f on aa.mgw_lo = f.mgw_lo
 )
 SELECT 
@@ -505,76 +421,25 @@ SELECT
 
 
                 MGW_PORT_EQUIVALENT, 
-                SPM_DTC_T1, 
+                SPC_T1, 
                 
-                MGW_CONTEXT_CAP,                 
-                DTC_SPM_CHNL,
-                
-                ATM_PVC_CT, 
-                SIPI_VSP_COUNT, 
-
-                ALLOC_ATM_CONTEXTS, 
-                IU_IP_CONTEXT, 
-                SIPI_CONTEXT_CAP, 
-                ALLOC_TXX_MGW_CONTEXTS, 
-
-                SPM_DTC_ALLOC_CHNL, 
-                NONA_CHANNELS, 
-                A_CHANNELS,
-                alloc_TXX_chnl,
-               
-                nona_port_alloc, 
-                a_intfc_port_alloc, 
-                TXX_port_alloc,
-                IU_ATM_Port_alloc, 
-                IU_ip_port_alloc, 
-                sipi_port_alloc,
+                MG
                 spm_dtc_alloc_t1,                 
   
-               case when node_type = 'TXX' then MGW_PORT_EQUIVALENT+SPM_DTC_T1 else MGW_PORT_EQUIVALENT+spm_dtc_alloc_t1 end as config_port_cap,
-                  
-                SPM_DTC_EQM_TRAFF_CAP,                 
-                ATM_TRAFF_CAP,                 
-                IU_IP_TRAFF_CAP, 
-                SIPI_TRAFF_CAP,                
- 
-                MGW_CTXT_TRAFF_CAP,                 
-                TXX_MGW_TRAFF_CAP, 
- 
-                ALLOC_SPM_DTC_TRAFF_CAP, 
-                NONA_TRAFF_CAP,               
-                A_INTFC_TRAFF_CAP,
-                TOT_TXX_TRAFF_CAP, 
- 
-                A_ERLANGS, 
-                NONA_ERLANGS, 
-                TXX_ERL,
-                ATM_IU_ERL, 
-                IU_IP_ERL, 
-                SIP_I_ERL, 
-
-                TOT_ERL_TRAFF, 
-                REQD_AVG_CONTEXTS,
+               case when node_type = 'TXX' then MGW_PORT_EQUIVALENT+SPM_DTC_T1 
+                else MGW_PORT_EQUIVALENT+spm_dtc_alloc_t1 end as config_port_cap,
+                  QD_AVG_CONTEXTS,
                 
                 case when node_type = 'TXX' then MGW_CONTEXT_CAP+DTC_SPM_CHNL else
                     MGW_CONTEXT_CAP+SPM_DTC_ALLOC_CHNL end as total_ctx_chnl_capacity,
                     
-                case when node_type = 'TXX' then trunc(ac.erlangb_package.ERLANGB_OFFERED(0.xxx,MGW_CONTEXT_CAP+DTC_SPM_CHNL)) else
-                    trunc(ac.erlangb_package.ERLANGB_OFFERED(0.xxx,MGW_CONTEXT_CAP+SPM_DTC_ALLOC_CHNL)) end as total_traffic_capacity, 
+                case when node_type = 'TXX' 
+                        then trunc(ac.erlangb_package.ERLANGB_OFFERED(0.xxx,MGW_CONTEXT_CAP+DTC_SPM_CHNL)) 
+                        else trunc(ac.erlangb_package.ERLANGB_OFFERED(0.xxx,MGW_CONTEXT_CAP+SPM_DTC_ALLOC_CHNL)) end as total_traffic_capacity, 
                      
-                round(TOT_ERL_TRAFF/case when node_type = 'TXX' then trunc(ac.erlangb_package.ERLANGB_OFFERED(0.xxx,MGW_CONTEXT_CAP+DTC_SPM_CHNL)) else
-                    trunc(ac.erlangb_package.ERLANGB_OFFERED(0.xxx,MGW_CONTEXT_CAP+SPM_DTC_ALLOC_CHNL)) end,3)*100 as resource_util,
-                    
-                round(REQD_AVG_CONTEXTS/case when node_type = 'TXX' then trunc(ac.erlangb_package.ERLANGB_OFFERED(0.xxx,MGW_CONTEXT_CAP+DTC_SPM_CHNL)) else
-                    trunc(ac.erlangb_package.ERLANGB_OFFERED(0.xxx,MGW_CONTEXT_CAP+SPM_DTC_ALLOC_CHNL)) end,3)*100 as chnl_util,        
-                                      
-
-                
-                CASE WHEN SIPI_TRAFF_CAP = 0 THEN 0 ELSE  ROUND (SIP_I_ERL/SIPI_TRAFF_CAP,3)*100 end AS SIPI_RESOURCE_UTIL,            
-                CASE WHEN  IU_IP_TRAFF_CAP = 0 THEN 0 ELSE  ROUND (IU_IP_ERL/IU_IP_TRAFF_CAP,3)*100 end AS IU_IP_Resource_util,
-                CASE WHEN   ATM_TRAFF_CAP= 0 THEN 0 ELSE  ROUND (ATM_IU_ERL/ATM_TRAFF_CAP,3)*100  end as IU_atm_resource_util,
-                CASE WHEN TOT_TXX_TRAFF_CAP = 0 THEN 0 ELSE ROUND(TXX_ERL/tot_TXX_traff_cap,3)*100 end as TXX_resource_util
---                CASE WHEN    A_INTFC_TRAFF_CAP= 0 THEN 0 ELSE  ROUND (A_ERLANGS / A_INTFC_TRAFF_CAP,3)*100 end AS a_intfc_resource_util,
+                round(TOT_ERL_TRAFF/case when node_type = 'TXX' 
+                        then trunc(ac.erlangb_package.ERLANGB_OFFERED(0.xxx,MGW_CONTEXT_CAP+DTC_SPM_CHNL)) else
+            ROUND (A_ERLANGS / A_INTFC_TRAFF_CAP,3)*100 end AS a_intfc_resource_util,
 --                CASE WHEN   NONA_TRAFF_CAP= 0 THEN 0 ELSE  ROUND ( NONA_
                 
                 
