@@ -7,7 +7,7 @@ output: html_document
 
 #  Purpose
 <p>  The purpose of this document is to demonstrate some of the code I created for reporting
-off of various databases.  The schema have been destroyed and as I did not always notate
+off of various databases.  I keep sample / snippets of code when I learn something new so I can reuse the syntax in the future.  The schema have been destroyed and as I did not always notate
 a variable assigned to schema, some of the joins will not be functional.
 
 I was also limited in my permissions on the database.  I was not allowed to create
@@ -28,7 +28,7 @@ This bit of code creates a view based off dblinked connection to another databas
 
 
 <pre><code>
-create or repDACe view MSC_SUBNET_CONNECTIONS as 
+create or replace view MSC_SUBNET_CONNECTIONS as 
 
 WITH
 
@@ -107,7 +107,7 @@ This snippet of code demonstrates the use of REGEXP_SUBSTR to parse out portions
 
 <pre><code>
 
-CREATE OR REPDACE FORCE VIEW MGW_LNG_MAP AS
+CREATE OR replace FORCE VIEW MGW_LNG_MAP AS
    SELECT a.MSC_LNG AS SWITCH_LNG,
           MSC_MGWOBJ AS SWITCH_MGW_OBJ,
           REGEXP_SUBSTR(a.MSC_LNG, '[[:alnum:]]+', 1, 1,'i') as switch,
@@ -126,7 +126,7 @@ Parsing both numeric and char data.  Also joining data across multiple datamarts
 but dec to hex - concatenating data to create multiple versions for this view for future joining, ranking, and joining all this data into a new standardized, single view.
 </p>
 <pre><code>
-        create or repDACe view test.active_ID_INFO_base AS         
+        create or replace view test.active_ID_INFO_base AS         
         with dates as (select         
             * from PROD_SCHEMA.NU5DATES
         )
@@ -156,12 +156,12 @@ but dec to hex - concatenating data to create multiple versions for this view fo
                 hex_pc,
                 to_number(hex_pc, 'XXXXXXXXXX') as decver_pc,
                 orig_pc,
-                repDACe(TO_CHAR(to_number(substr(hex_pc,1,2), 'XXX'),'099')||'-'||TO_CHAR(to_number(substr(hex_pc,3,2), 'XXX'),'099')||'-'||TO_CHAR(to_number(substr(hex_pc,5,2), 'XXX'),'099'),' ','') AS 
+                replace(TO_CHAR(to_number(substr(hex_pc,1,2), 'XXX'),'099')||'-'||TO_CHAR(to_number(substr(hex_pc,3,2), 'XXX'),'099')||'-'||TO_CHAR(to_number(substr(hex_pc,5,2), 'XXX'),'099'),' ','') AS 
         dash_pc_long,
-                repDACe(TO_CHAR(to_number(substr(hex_pc,1,2), 'XXX'),'099')||'.'||TO_CHAR(to_number(substr(hex_pc,3,2), 'XXX'),'099')||'.'||TO_CHAR(to_number(substr(hex_pc,5,2), 'XXX'),'099'),' ','') AS dot_pc_long,
-                repDACe(TO_CHAR(to_number(substr(hex_pc,1,2), 'XXX'),'999')||'-'||TO_CHAR(to_number(substr(hex_pc,3,2), 'XXX'),'999')||'-'||TO_CHAR(to_number(substr(hex_pc,5,2), 'XXX'),'999'),' ','') AS dash_pc,
-                repDACe(TO_CHAR(to_number(substr(hex_pc,1,2), 'XXX'),'999')||'.'||TO_CHAR(to_number(substr(hex_pc,3,2), 'XXX'),'999')||'.'||TO_CHAR(to_number(substr(hex_pc,5,2), 'XXX'),'999'),' ','') AS dot_pc
-      -- repDACe(dash_pc_long, '-','.') as dot_pc_long,
+                replace(TO_CHAR(to_number(substr(hex_pc,1,2), 'XXX'),'099')||'.'||TO_CHAR(to_number(substr(hex_pc,3,2), 'XXX'),'099')||'.'||TO_CHAR(to_number(substr(hex_pc,5,2), 'XXX'),'099'),' ','') AS dot_pc_long,
+                replace(TO_CHAR(to_number(substr(hex_pc,1,2), 'XXX'),'999')||'-'||TO_CHAR(to_number(substr(hex_pc,3,2), 'XXX'),'999')||'-'||TO_CHAR(to_number(substr(hex_pc,5,2), 'XXX'),'999'),' ','') AS dash_pc,
+                replace(TO_CHAR(to_number(substr(hex_pc,1,2), 'XXX'),'999')||'.'||TO_CHAR(to_number(substr(hex_pc,3,2), 'XXX'),'999')||'.'||TO_CHAR(to_number(substr(hex_pc,5,2), 'XXX'),'999'),' ','') AS dot_pc
+      -- replace(dash_pc_long, '-','.') as dot_pc_long,
       --   REGEXP_SUBSTR(dash_pc_long, '[0-9]+', 1, 1)*1||'.'||REGEXP_SUBSTR(dash_pc_long, '[0-9]+', 1, 2)*1||'.'||REGEXP_SUBSTR(dash_pc_long, '[0-9]+', 1, 3) as dot_pc,
        --  REGEXP_SUBSTR(dash_pc_long, '[0-9]+', 1, 1)*1||'-'||REGEXP_SUBSTR(dash_pc_long, '[0-9]+', 1, 2)*1||'-'||REGEXP_SUBSTR(dash_pc_long, '[0-9]+', 1, 3) as dash_pc
       from NO_base
@@ -180,19 +180,19 @@ but dec to hex - concatenating data to create multiple versions for this view fo
 
                 REGEXP_SUBSTR(SPC8BITFORMAT, '[0-9]+', 1, 1)*1||'.'||REGEXP_SUBSTR(SPC8BITFORMAT, '[0-9]+', 1, 2)*1||'.'||REGEXP_SUBSTR(SPC8BITFORMAT, '[0-9]+', 1, 3)*1 as dot_pc,
 
-                repDACe(
+                replace(
                 to_char(REGEXP_SUBSTR(SPC8BITFORMAT, '[0-9]+', 1, 1), '099')||'.'||
                 to_char(REGEXP_SUBSTR(SPC8BITFORMAT, '[0-9]+', 1, 1), '099')||'.'||
                 to_char(REGEXP_SUBSTR(SPC8BITFORMAT, '[0-9]+', 1, 3), '099'),' ','') as dot_pc_long,
-                repDACe(
+                replace(
                 to_char(REGEXP_SUBSTR(SPC8BITFORMAT, '[0-9]+', 1, 1), '099')||'-'||
                 to_char(REGEXP_SUBSTR(SPC8BITFORMAT, '[0-9]+', 1, 1), '099')||'-'||
                 to_char(REGEXP_SUBSTR(SPC8BITFORMAT, '[0-9]+', 1, 3), '099'),' ','')  as dash_pc_long,
                 
                 --opc as decver_pc,  
-                repDACe(to_char(REGEXP_SUBSTR(SPC8BITFORMAT, '[0-9]+', 1, 1)*1,'XX'),' ','')||
-                repDACe(to_char(REGEXP_SUBSTR(SPC8BITFORMAT, '[0-9]+', 1, 2)*1,'XX'),' ','')||
-                repDACe(to_char(REGEXP_SUBSTR(SPC8BITFORMAT, '[0-9]+', 1, 3)*1,'XX'),' ','') as hex_pc
+                replace(to_char(REGEXP_SUBSTR(SPC8BITFORMAT, '[0-9]+', 1, 1)*1,'XX'),' ','')||
+                replace(to_char(REGEXP_SUBSTR(SPC8BITFORMAT, '[0-9]+', 1, 2)*1,'XX'),' ','')||
+                replace(to_char(REGEXP_SUBSTR(SPC8BITFORMAT, '[0-9]+', 1, 3)*1,'XX'),' ','') as hex_pc
           
           from E_UMTS.UN_OCAL_SIGNAL_PT@otherdb, dates
           where start_date between date1 and date3 
@@ -359,7 +359,7 @@ Use of packages as well as case statements
  <pre><code> 
 --drop view no_msc_capacity /*
 
-create or repDACe view no_msc as
+create or replace view no_msc as
 with
 all_rec as (
        select 
@@ -607,7 +607,7 @@ Includes crossing multiple data marts, database versions, vendors, data types.  
 
 <pre><code> 
 
-create or repDACe view MSC_DAC_CAC_RANGES AS
+create or replace view MSC_DAC_CAC_RANGES AS
 
 with 
 dates as (select * from PROD.CF_DATES),
