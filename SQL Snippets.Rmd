@@ -15,6 +15,10 @@ I keep track of my syntax by keeping copies of useful code and pasting that into
 
 This bit of code creates a view based off dblinked connection to another database for configuration information.  The challenges in joining the two tables is that the data stream is often interrupted, so I have to query across the report period range and pull only the latest configuration data.  I use row_number for the rank and partition by a variety of attributes.  In this case, the order is only by one attribute, but I do have queries where there are more than one attribute in both the partition and the order by statements of row_number.  Besides struggling with inconsistent reporting and a fixed date range to report by, I'm having to deal with inconsistent data types, character strings, and creating unique identifiers for key field creation.  
 
+Some of my older queries are straight nested statements.  More "modern" queries were nested "With" statements - until I had to migrate to SQL Server database.  Then there were restrictions on "With" statemented queries because of the call structure.  As we were not using 2012 SQL Server, I can't say that this restriction might have gone away.
+
+Most views were created with a call to "Dates" which were the reporting period dates.  I adjusted in individual
+views depending upon the health of the data stream.
 
 <pre><code>
 create or replace view MSC_SUBNET_CONNECTIONS as 
@@ -29,6 +33,12 @@ DATES AS   (
 
 ,SUBNET_BASE AS (select * from (
             select 
+</code></pre>
+        This nested call is because I'm ranking with use of row_number because I want a "number" even in the case of a tie.
+        I'm also converting one of the fields to upper case, concatenating fields with the use of a dash to create unique identifiers which will be available for other external view / report joins as well as internal joins.
+        I'm substringing out instead of REGEXP out because this code is older and I didn't "upgrade" it when 
+
+<code><pre>
 
                 upper(SWITCH) as msc, 
                 row_number () over (partition by switch, subnet_base, subnet_number order by 

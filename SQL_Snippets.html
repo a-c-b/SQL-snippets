@@ -70,14 +70,14 @@ img {
 <div id="purpose" class="section level1">
 <h1>Purpose</h1>
 <p>  
-<p>The purpose of this document is to demonstrate some of the code I created for reporting off of various databases. I keep sample / snippets of code when I learn something new so I can reuse the syntax in the future. The schema, some of the logic, the names, and other pieces of information have been changed so this work is non-functional, for example only.</p>
-<p>I had more flexibility in code as we went through the Oracle upgrades to version 12. Some of the statistical analysis statements were only available to me after the most recent upgrade on one of the databases.</p>
-<p>Also, I come to this work from an engineering perspective. I keep track of my syntax by keeping copies of useful code and pasting that into work as I need. One of my most used statements, the rank statement, has a structure I continue to forget to this day because I simply “copy” / “paste” it into code so often I never remembered.</p>
-Another thing you’ll find is much of my parsing is not done with REGEXP because I did not have access to that group of commands until recently, and even then, not across all databases. So much of my older code used INSTR, SUBSTR, etc. I have, however, included some code with examples of using REGEXP syntax.
+<p>The purpose of this document is to demonstrate some of the code I created for reporting off of various databases. The schema, some of the logic, the names, and other pieces of information have been changed so this work is non-functional, for example only.</p>
+I keep track of my syntax by keeping copies of useful code and pasting that into work as I need. One of my most used statements, the rank statement, has a structure I continue to forget to this day because I simply “copy” / “paste” it into code so often I never remembered. I had more flexibility in code as we went through the Oracle upgrades to version 12. Some of the statistical analysis statements were only available to me after the most recent upgrade on one of the databases. Until recently, my parsing is not done with REGEXP because I did not have access to that group of commands, and even then, not across all databases. So much of my older code used INSTR, SUBSTR, etc. I have, however, included some code with examples of using REGEXP syntax.
 </p>
 <div id="code-example-1---nested-queries-ranking-creating-key-fields-unique-identifiers-joining-dblink" class="section level2">
 <h2>Code Example 1 - nested queries, ranking, creating key fields / unique identifiers, joining, dblink</h2>
 <p>This bit of code creates a view based off dblinked connection to another database for configuration information. The challenges in joining the two tables is that the data stream is often interrupted, so I have to query across the report period range and pull only the latest configuration data. I use row_number for the rank and partition by a variety of attributes. In this case, the order is only by one attribute, but I do have queries where there are more than one attribute in both the partition and the order by statements of row_number. Besides struggling with inconsistent reporting and a fixed date range to report by, I’m having to deal with inconsistent data types, character strings, and creating unique identifiers for key field creation.</p>
+<p>Some of my older queries are straight nested statements. More “modern” queries were nested “With” statements - until I had to migrate to SQL Server database. Then there were restrictions on “With” statemented queries because of the call structure. As we were not using 2012 SQL Server, I can’t say that this restriction might have gone away.</p>
+<p>Most views were created with a call to “Dates” which were the reporting period dates. I adjusted in individual views depending upon the health of the data stream.</p>
 <pre><code>
 create or replace view MSC_SUBNET_CONNECTIONS as 
 
@@ -91,6 +91,11 @@ DATES AS   (
 
 ,SUBNET_BASE AS (select * from (
             select 
+</code></pre>
+        
+<p>This nested call is because I’m ranking with use of row_number because I want a “number” even in the case of a tie. I’m also converting one of the fields to upper case, concatenating fields with the use of a dash to create unique identifiers which will be available for other external view / report joins as well as internal joins. I’m substringing out instead of REGEXP out because this code is older and I didn’t “upgrade” it when</p>
+<code>
+<pre>
 
                 upper(SWITCH) as msc, 
                 row_number () over (partition by switch, subnet_base, subnet_number order by 
