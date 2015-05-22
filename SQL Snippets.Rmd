@@ -40,9 +40,8 @@ DATES AS   (
 ,SUBNET_BASE AS (select * from (
             select 
 ```
-        This nested call is because I'm ranking with use of row_number because I want a "number" even in the case of a tie.
-        I'm also converting one of the fields to upper case, concatenating fields with the use of a dash to create unique identifiers which will be available for other external view / report joins as well as internal joins.
-        I'm substringing out instead of REGEXP out because this code is older and I didn't "upgrade" it when 
+This nested call is because I'm ranking with use of row_number because I want a "number" even in the case of a tie.  I'm also converting one of the fields to upper case, concatenating fields with the use of a dash to create unique identifiers which will be available for other external view / report joins as well as internal joins.
+I'm substringing out instead of REGEXP out because this code is older and I didn't "upgrade" it when 
 
 ```{sql}
 
