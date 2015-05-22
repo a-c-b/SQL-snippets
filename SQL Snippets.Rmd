@@ -6,10 +6,12 @@ date: "Tuesday, May 19, 2015"
 ---
 
 #  Purpose
-<p>  The purpose of this document is to demonstrate some of the code I created for reporting off of various databases.  The schema, some of the logic, the names, and other pieces of information have been changed so this work is non-functional, and is here only to demonstrate my knowledge of syntax and a little bit of the complexity of the work I've done.
+<p>  The purpose of this document is to demonstrate my coding.  The schema, some of the logic, the names, and other pieces of information have been changed so this examples are non-functional.  They are here to show my knowledge of syntax and a little bit of the complexity of the work I've done.
 
-I keep track of my syntax by keeping copies of useful code and pasting that into work as I need.  One of my most used statements, the rank statement, has a structure I continue to forget to this day because I simply "copy" / "paste" it into code so often I never remembered.  I had more flexibility in code as we went through the Oracle upgrades to version 12.  Some of the statistical analysis statements were only available to me after the most recent upgrade on one of the databases.  Until recently, my parsing was not done with REGEXP because I did not have access to that syntax, and even then, not across all databases.  So much of my older code used INSTR, SUBSTR, etc.  I have, however, included some code with examples of using REGEXP syntax.
-</p>
+I had more flexibility in code as we went through the Oracle upgrades to version 12.  Some of the statistical analysis statements were only available to me after the most recent upgrade on one of the databases.  Until recently, my parsing was not done with REGEXP because I did not have access to that syntax, and even then, not across all databases.  So much of my older code used INSTR, SUBSTR, etc.  I have, however, included some code with examples of using REGEXP syntax.
+
+I keep track of my syntax by keeping copies of useful code and pasteing that into work as I need.  One of my most used statements, the rank statement, has a structure I continue to forget to this day because I simply "copy" / "paste" it into code so often I never remembered.  
+
 ##  Code Example 1 - nested queries, ranking, creating key fields / unique identifiers, joining, dblink
 
 This bit of code creates a view based off dblinked connection to another database for configuration information.  The challenges in joining the two tables is that the data stream is often interrupted, so I have to query across the report period range and pull only the latest configuration data.  I use row_number for the rank and partition by a variety of attributes.  In this case, the order is only by one attribute, but I do have queries where there are more than one attribute in both the partition and the order by statements of row_number.  Besides struggling with inconsistent reporting and a fixed date range to report by, I'm having to deal with inconsistent data types, character strings, and creating unique identifiers for key field creation.  
