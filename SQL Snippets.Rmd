@@ -6,7 +6,7 @@ date: "Tuesday, May 19, 2015"
 ---
 
 #  Purpose
-The purpose of this document is to demonstrate my coding.  The schema, some of the logic, the names, and other pieces of information have been changed so this examples are non-functional.  They are here to show my knowledge of syntax and a little bit of the complexity of the work I've done.
+The purpose of this document is to demonstrate my coding.  The schema, some of the logic, the names, and other pieces of information have been changed so the examples are non-functional.  They are here to show my knowledge of syntax and a little bit of the complexity of some of the work I've done.
 
 I had more flexibility in code as we went through the Oracle upgrades to version 12.  Some of the statistical analysis statements were only available to me after the most recent upgrade on one of the databases.  Until recently, my parsing was not done with REGEXP because I did not have access to that syntax, and even then, not across all databases.  So much of my older code used INSTR, SUBSTR, etc.  I have, however, included some code with examples of using REGEXP syntax.
 
@@ -44,7 +44,7 @@ DATES AS   (
         I'm also converting one of the fields to upper case, concatenating fields with the use of a dash to create unique identifiers which will be available for other external view / report joins as well as internal joins.
         I'm substringing out instead of REGEXP out because this code is older and I didn't "upgrade" it when 
 
-<code><pre>
+```{sql}
 
                 upper(SWITCH) as msc, 
                 row_number () over (partition by switch, subnet_base, subnet_number order by 
@@ -104,13 +104,13 @@ start_date desc) as row_number,
         FROM OFFSET A LEFT JOIN SUBNET_BASE B
         ON A.msc_subnet_num = B.msc_subnet_num
                 
-</code></pre>
+```
 
 ##  Code Example 2 - use of REGEXP and converting between decimal, hex, and binary, crossing datamarts
 
 This snippet of code demonstrates the use of REGEXP_SUBSTR to parse out portions of information from within a single field.  
 
-<pre><code>
+```{sql}
 
 CREATE OR replace FORCE VIEW MGW_LNG_MAP AS
    SELECT a.MSC_LNG AS SWITCH_LNG,
@@ -125,12 +125,11 @@ CREATE OR replace FORCE VIEW MGW_LNG_MAP AS
      FROM TEST.MGW_LNG_MAPPING a LEFT JOIN TEST.MSC_NAMES_2SW
             ON REGEXP_SUBSTR(a.MSC_LNG, '[[:alnum:]]+', 1, 1,'i') = OMSC;
 
-</code></pre>
-<p>
+```
+
 Parsing both numeric and char data.  Also joining data across multiple datamarts, multiple vendors, converting across multiple datatypes - not just char to numeric,
 but dec to hex - concatenating data to create multiple versions for this view for future joining, ranking, and joining all this data into a new standardized, single view.
-</p>
-<pre><code>
+```{sql}
         create or replace view test.active_ID_INFO_base AS         
         with dates as (select         
             * from PROD_SCHEMA.NU5DATES
@@ -239,12 +238,13 @@ but dec to hex - concatenating data to create multiple versions for this view fo
     SELECT dow,GS,vendor,e164,dash_pc,dot_pc,dot_pc_long,dash_pc_long,decver_pc,hex_pc FROM ERIC
     
     ORDER BY DOW, GS        
-  </pre></code>      
+```  
   
 ## Code Example #3 - Use of PIVOT to count records reporting to list of tables.
-<p>  Count the number of records, and / or nodes reporting over a date range using the PIVOT function </p>
+ Count the number of records, and / or nodes reporting over a date range using the PIVOT function </p>
 
-<pre><code>     
+```{sql}
+
           with
                 datum as (
                             SELECT DISTINCT mgw, datetime, to_char(datetime, 'DD-MON-YYYY')  as dow, 
@@ -290,14 +290,14 @@ but dec to hex - concatenating data to create multiple versions for this view fo
             
             
   
-    </pre></code>     
+```   
 
 ##  Example #4 Case statements
 Use of packages as well as case statements
 
 
- <pre><code> 
---drop view no_msc_capacity /*
+```{sql}
+--drop view no_msc /*
 
 create or replace view no_msc as
 with
@@ -481,12 +481,12 @@ SUM CASE statement
         group by a.mgw_lo, a.MGW
         order by mgw
         
-   </pre></code> 
+```
   
 ##  Example #5 LAG and LEAD
 Includes crossing multiple data marts, database versions, vendors, data types.  Joins the normalized data into a single table so that all vendors' nodes (i.e., the whole network) are represented.  The use of LAG and LEAD was applied for the vendor where there were individual rows of information and the range of one of the objects had to be aggregated so that the max and min number within the range were represented on a single line.
 
-<pre><code> 
+```{sql}
 
 create or replace view MSC_DAC_CAC_RANGES AS
 
@@ -584,19 +584,12 @@ from (
                      sum(decode (diffcac, 1, 0, diffcac)) over (partition by switch, DAC order by cac RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW) diffcac
                      
                  from (
-
-       
-
-
-
  select /*+DRIVING_SITE(a)*/
                 msc_id as switch, 
                 lo_AREA_CODE as DAC,
                 START_se_AREA_CODE as cac,
                 lag(START_se_AREA_CODE, 1,0) over (partition by msc_id, lo_AREA_CODE order by START_se_AREA_CODE) E,
                 (START_se_AREA_CODE - LAG(START_se_AREA_CODE, 1, 0) OVER (partition by msc_id, lo_AREA_CODE ORDER BY START_se_AREA_CODE)) diffcac  
-
-
         from L.DACSTABLE@OTHERDB, dates 
         where pull_date between date1 and date3
          AND START_se_AREA_CODE = END_se_AREA_CODE
@@ -631,9 +624,6 @@ A3 as (
         from step2
         wHERE TOSS = 'NULL'
                  ),       
-                
-
-
 msc_join as (
 select switch, vendor, DAC, startrange, endrange, DAC||'-'||startrange||'-'||endrange as DACrange from e 
 union all 
@@ -651,4 +641,4 @@ msc_range as (
     
   ) SELECT * FROM MSC_RANGE
 
-  </pre></code> 
+```
