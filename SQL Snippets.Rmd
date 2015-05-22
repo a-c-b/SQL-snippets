@@ -6,10 +6,9 @@ output: html_document
 ---
 
 #  Purpose
-<p>  The purpose of this document is to demonstrate some of the code I created for reporting
-off of various databases.  The schema, some of the logic, the names, and other pieces of information have been changed so this work is non-functional, for example only.
+<p>  The purpose of this document is to demonstrate some of the code I created for reporting off of various databases.  The schema, some of the logic, the names, and other pieces of information have been changed so this work is non-functional, and is here only to demonstrate my knowledge of syntax and a little bit of the complexity of the work I've done.
 
-I keep track of my syntax by keeping copies of useful code and pasting that into work as I need.  One of my most used statements, the rank statement, has a structure I continue to forget to this day because I simply "copy" / "paste" it into code so often I never remembered.  I had more flexibility in code as we went through the Oracle upgrades to version 12.  Some of the statistical analysis statements were only available to me after the most recent upgrade on one of the databases.  Until recently, my parsing is not done with REGEXP because I did not have access to that group of commands, and even then, not across all databases.  So much of my older code used INSTR, SUBSTR, etc.  I have, however, included some code with examples of using REGEXP syntax.
+I keep track of my syntax by keeping copies of useful code and pasting that into work as I need.  One of my most used statements, the rank statement, has a structure I continue to forget to this day because I simply "copy" / "paste" it into code so often I never remembered.  I had more flexibility in code as we went through the Oracle upgrades to version 12.  Some of the statistical analysis statements were only available to me after the most recent upgrade on one of the databases.  Until recently, my parsing was not done with REGEXP because I did not have access to that syntax, and even then, not across all databases.  So much of my older code used INSTR, SUBSTR, etc.  I have, however, included some code with examples of using REGEXP syntax.
 </p>
 ##  Code Example 1 - nested queries, ranking, creating key fields / unique identifiers, joining, dblink
 
@@ -20,7 +19,7 @@ Some of my older queries are straight nested statements.  More "modern" queries 
 Most views were created with a call to "Dates" which were the reporting period dates.  I adjusted in individual
 views depending upon the health of the data stream.
 
-<pre><code>
+```{sql}
 create or replace view MSC_SUBNET_CONNECTIONS as 
 
 WITH
@@ -33,7 +32,7 @@ DATES AS   (
 
 ,SUBNET_BASE AS (select * from (
             select 
-</code></pre>
+```
         This nested call is because I'm ranking with use of row_number because I want a "number" even in the case of a tie.
         I'm also converting one of the fields to upper case, concatenating fields with the use of a dash to create unique identifiers which will be available for other external view / report joins as well as internal joins.
         I'm substringing out instead of REGEXP out because this code is older and I didn't "upgrade" it when 
