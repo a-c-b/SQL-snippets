@@ -14,7 +14,12 @@ I keep track of my syntax by keeping copies of useful code and pasteing that int
 
 ##  Code Example 1 - nested queries, ranking, creating key fields / unique identifiers, joining, dblink
 
-This bit of code creates a view based off dblinked connection to another database for configuration information.  The challenges in joining the two tables is that the data stream is often interrupted, so I have to query across the report period range and pull only the latest configuration data.  I use row_number for the rank and partition by a variety of attributes.  In this case, the order is only by one attribute, but I do have queries where there are more than one attribute in both the partition and the order by statements of row_number.  Besides struggling with inconsistent reporting and a fixed date range to report by, I'm having to deal with inconsistent data types, character strings, and creating unique identifiers for key field creation.  
+This bit of code creates a view based off a dblinked connection to another database to pull in configuration information for a utilization report (i.e., traffic / capacity = utilization).  The challenges in joining the two tables is that the data stream is often interrupted, so I had to modify the report date range to query across a larger range and pull in the data most close to the end date of the report.  
+
+Besides struggling with inconsistent reporting and a fixed date range to report by, I'm having to deal with inconsistent data types, character strings, and creating unique identifiers for key field creation.  Most of my work was around parsing and concatenating data from various fields:  datetimes parsed to days, or UTC calculated to PST, fields with text having a value parsed out to a new field, or multiple fields or fixed identities concatenated into a new unique id.
+
+I use row_number for the rank and partition by a variety of attributes.  In this case, the order is only by one attribute, but I do have queries where there are more than one attribute in both the partition and the order by statements of row_number.  I use row_number instead of rank because I don't want ties.  Most of my work would be impacted if I wanted only ten rows but eleven returned.  So, row_number is consistently used.
+
 
 Some of my older queries are straight nested statements.  More "modern" queries were nested "With" statements - until I had to migrate to SQL Server database.  Then there were restrictions on "With" statemented queries because of the call structure.  As we were not using 2012 SQL Server, I can't say that this restriction might have gone away.
 
