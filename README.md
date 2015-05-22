@@ -5,4 +5,6 @@ Most views were created with a call to "Dates" which were the reporting period d
 views depending upon the health of the data stream.
 
 This is documented in the SQL Snippets.Rmd file
+https://github.com/andrea345/SQL-snippets/blob/master/SQL%20Snippets.Rmd
+
 
